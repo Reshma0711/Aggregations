@@ -239,7 +239,6 @@ exports.q6 = async (req, res) => {
 };
 
 
-  
 
 // Find the restaurant with the highest-rated review
 
@@ -485,8 +484,6 @@ exports.q11 = async (req, res) => {
     }
   };
 
-
-
 //   List the top 3 cities with the most restaurants
   
 exports.q12 = async (req, res) => {
@@ -526,12 +523,48 @@ exports.q12 = async (req, res) => {
     }
   };
 
-
 //   Find restaurants where the average price of menu items is greater than $20
 
 exports.q13 = async (req, res) => {
     try {
-      const response = await Restaurant.aggregate();
+      const response = await Restaurant.aggregate([
+        {
+          $match: {
+            "menu.price": { $exists: true, $ne: [] }
+          }
+        },
+        {
+          $unwind: "$menu"
+        },
+        {
+          $group: {
+            _id: "$name",
+            totalMenuPrice: { $sum: "$menu.price" },
+            totalCount: { $sum: 1 }
+          }
+        },
+        {
+          $addFields: {
+            totalAvg: {
+              $divide: [
+                "$totalMenuPrice",
+                "$totalCount"
+              ]
+            }
+          }
+        },
+        {
+          $match: {
+            totalAvg: { $gt: 20 }
+          }
+        },
+        {
+          $project: {
+            name: "$_id",
+            _id: 0
+          }
+        }
+      ]);
   
       res.status(201).json({
         message: "Data Retrieved Successfully",
