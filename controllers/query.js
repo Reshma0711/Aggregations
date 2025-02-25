@@ -455,3 +455,93 @@ exports.q10 = async (req, res) => {
     }
   };
   
+
+//   Find the restaurant with the cheapest dish in its menu
+
+exports.q11 = async (req, res) => {
+    try {
+      const response = await Restaurant.aggregate([
+        {
+          $unwind: "$menu"
+        },
+        {
+          $sort: { "menu.price": 1 }
+        },
+        {
+          $limit: 1
+        }
+      ]);
+  
+      res.status(201).json({
+        message: "Data Retrieved Successfully",
+        success: "true",
+        response,
+      });
+    } catch (err) {
+      return res.status(501).json({
+        message: err.message,
+        success: "false",
+      });
+    }
+  };
+
+
+
+//   List the top 3 cities with the most restaurants
+  
+exports.q12 = async (req, res) => {
+    try {
+      const response = await Restaurant.aggregate([
+        {
+          $group: {
+            _id: "$location.city",
+            restaurantCount: { $sum: 1 }
+          }
+        },
+        {
+          $sort: {
+            restaurantCount: -1
+          }
+        },
+        {
+          $limit: 3
+        },
+        {
+          $project: {
+            _id:1
+          }
+        }
+      ]);
+  
+      res.status(201).json({
+        message: "Data Retrieved Successfully",
+        success: "true",
+        response,
+      });
+    } catch (err) {
+      return res.status(501).json({
+        message: err.message,
+        success: "false",
+      });
+    }
+  };
+
+
+//   Find restaurants where the average price of menu items is greater than $20
+
+exports.q13 = async (req, res) => {
+    try {
+      const response = await Restaurant.aggregate();
+  
+      res.status(201).json({
+        message: "Data Retrieved Successfully",
+        success: "true",
+        response,
+      });
+    } catch (err) {
+      return res.status(501).json({
+        message: err.message,
+        success: "false",
+      });
+    }
+  };

@@ -1,7 +1,7 @@
 const express=require("express")
 
 const router=express.Router()
-const {q1,q2, q3, q4,q5,q6, q7,q8,q9,q10}=require("../controllers/query")
+const {q1,q2, q3, q4,q5,q6, q7,q8,q9,q10, q11, q12}=require("../controllers/query")
 const {getData}=require("../controllers/getdata")
 
 
@@ -27,4 +27,7 @@ router.get("/q9",q9)
 
 router.get("/q10",q10)
 
+router.get("/q11",q11)
+
+router.get("/q12",q12)
 module.exports=router
